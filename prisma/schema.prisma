@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User{
+  id String @id @default(uuid())
+  email String @unique
+  name String
+  created_at DateTime @default(now())
+  update_at DateTime @updatedAt
+  user_patch Reserva[] @relation("user")
+
+  @@map("users")
+}
+
+model Cachorro{
+  id String @id @default(uuid())
+  nome String @unique
+  genero String
+  raca String
+  peso Float
+  data_nascimento DateTime
+  pet_cachorro Reserva[] @relation("cachorro")
+
+
+  @@map("Cachorros")
+}
+
+model Gato{
+  id String @id @default(uuid())
+  nome String @unique
+  genero String
+  raca String
+  peso Float
+  data_nascimento DateTime
+  pet_gato Reserva[] @relation("gato")
+
+
+  @@map("Gatos")
+}
+
+model Reserva{
+  user User @relation("user", fields: [userId], references: [id])
+  userId String
+  cachorro Cachorro @relation("cachorro", fields: [cachorroId], references: [id])
+  cachorroId String
+  gato Gato @relation("gato", fields: [gatoId], references: [id])
+  gatoId String
+
+  @@id([userId, cachorroId, gatoId])
+  @@map("reserva")
+}
